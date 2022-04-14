@@ -4,52 +4,50 @@ import numpy as np
 import face_recognition
 import os
 from datetime import datetime
+import pandas as pd
 
 # from PIL import ImageGrab
 
-path = 'ImagesAttendance'
+path = 'ImagesAttendance/'
 images = []
 classNames = []
 myList = os.listdir(path)
 print(myList)
 for cl in myList:
     curImg = cv2.imread(f'{path}/{cl}')
-images.append(curImg)
-classNames.append(os.path.splitext(cl)[0])
+    images.append(curImg)
+    classNames.append(os.path.splitext(cl)[0])
 print(classNames)
-
+df=pd.DataFrame(columns=["Name","Time"])
+print(len(images))
+d1=""
 
 def findEncodings(images):
     encodeList = []
-
-
     for img in images:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    encode = face_recognition.face_encodings(img)[0]
-    encodeList.append(encode)
+        encode = face_recognition.face_encodings(img)
+        encodeList.append(encode)
     return encodeList
 
-
+timeList=[]
+nameList=[]
+x=0
 def markAttendance(name):
-    with open('Attendance.csv', 'r+') as f:
-        myDataList = f.readlines()
-        nameList = []
-        for line in myDataList:
-            entry = line.split(',')
-            nameList.append(entry[0])
-        if name not in nameList:
-            now = datetime.now()
-            dtString = now.strftime('%H:%M:%S')
-            f.writelines(f'n{name},{dtString}')
+    today=datetime.now()
+    d1=today.strftime("%d/%m/%Y %H:%M:%S")
+    timeList.append(d1)
+    nameList.append(name)
 
-#### FOR CAPTURING SCREEN RATHER THAN WEBCAM
+#### FOR CAPTURING SCREEN (DEMO)
 # def captureScreen(bbox=(300,300,690+300,530+300)):
 #     capScr = np.array(ImageGrab.grab(bbox))
 #     capScr = cv2.cvtColor(capScr, cv2.COLOR_RGB2BGR)
 #     return capScr
 
-encodeListKnown = findEncodings(images)
-print('Encoding Complete')
+
+encodeListKnown=findEncodings(images)
+print('Encoding Complete',len(encodeListKnown))
 
 cap = cv2.VideoCapture(0)
 
@@ -66,18 +64,28 @@ while True:
     for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
         matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
         faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
-# print(faceDis)
+
+
+        print(faceDis) #error in faceDis
         matchIndex = np.argmin(faceDis)
 
-        if matches[matchIndex]:
-            name = classNames[matchIndex].upper()
-# print(name)
-            y1, x2, y2, x1 = faceLoc
-            y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
-            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
-            cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-            markAttendance(name)
+        while (matchIndex < 6):
+            if matches[matchIndex]:
+                name = classNames[matchIndex].upper()
+                # print(name)
+                y1, x2, y2, x1 = faceLoc
+                y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
+                cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
+                cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+                markAttendance(name)
 
+    series2=pd.Series(timeList)
+    series1=pd.Series(nameList)
+
+    df.Name=series1
+    df.Time=series2
+    df.to_csv("Attendance.csv")
     cv2.imshow('Webcam', img)
+
     cv2.waitKey(1)
