@@ -99,6 +99,7 @@ while True:
             cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
             markAttendance(name)
     frame = {'Names': nameList, 'Time': timeList}
+
     # df["Names"]=pd.Series(nameList)
     # df["Time"]=pd.Series(timeList)
     df = pd.DataFrame(frame);
@@ -132,3 +133,6 @@ while True:
     # print(data)
 
     cv2.waitKey(1)
+
+   
+
