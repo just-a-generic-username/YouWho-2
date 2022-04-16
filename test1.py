@@ -1,4 +1,5 @@
 
+
 from pickle import FALSE
 import cv2
 import numpy as np
@@ -13,14 +14,11 @@ path = 'ImagesAttendance/'
 images = []
 classNames = []
 myList = os.listdir(path)
-print(myList)
 for cl in myList:
     curImg = cv2.imread(f'{path}/{cl}')
     images.append(curImg)
     classNames.append(os.path.splitext(cl)[0])
-print(classNames)
 df=pd.DataFrame(columns=["Names","Time"])
-print(len(images))
 d1=""
 
 def findEncodings(images):
@@ -57,10 +55,8 @@ def markAttendance(name):
 
 
 encodeListKnown=findEncodings(images)
-print('Encoding Complete',len(encodeListKnown))
 
 cap = cv2.VideoCapture(0)
-print(encodeListKnown)
 while True:
     success, img = cap.read()
 
@@ -72,7 +68,6 @@ while True:
     encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
     i=0
     for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
-        print(encodesCurFrame)
         faceDis = []
         matches = []
         for i in range (len(encodeListKnown)):
@@ -84,14 +79,12 @@ while True:
             i+=1
         #matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
         
-        print(matches)
-        print(len(faceDis)) #error in faceDis
+       
         matchIndex = np.argmin(faceDis)
 
 
         if matches[matchIndex]:
             name = classNames[matchIndex].upper()
-            # print(name)
             y1, x2, y2, x1 = faceLoc
             y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
@@ -104,11 +97,6 @@ while True:
     # df["Time"]=pd.Series(timeList)
     df = pd.DataFrame(frame);
     df.to_csv("Attendance.csv")
-    print("1")
-    print(df)
-    print("2")
-    print(nameList)
-    print(timeList)
     nameSz = len(nameList)
     #for i in range(nameSz):
 
@@ -122,6 +110,20 @@ while True:
     
     cv2.imshow('Webcam', img)
     # data=[]
+    # data_in=[]
+    # nt = len(nameList)
+    # for i in range(nt):
+    #     data_in = [nameList[i],timeList[i]]
+    #     data.append(data_in)
+    # with open('Attendance.csv','w',newline='') as fp:
+    #     a = csv.writer(fp, delimeter=',')
+    # a.writerows(data)
+   
+    cv2.waitKey(1)
+
+   
+
+
     # data_in=[]
     # nt = len(nameList)
     # for i in range(nt):
