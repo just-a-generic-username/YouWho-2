@@ -1,5 +1,4 @@
 
-
 from pickle import FALSE
 import cv2
 import numpy as np
@@ -119,21 +118,6 @@ while True:
     #     a = csv.writer(fp, delimeter=',')
     # a.writerows(data)
    
-    cv2.waitKey(1)
-
-   
-
-
-    # data_in=[]
-    # nt = len(nameList)
-    # for i in range(nt):
-    #     data_in = [nameList[i],timeList[i]]
-    #     data.append(data_in)
-    # with open('Attendance.csv','w',newline='') as fp:
-    #     a = csv.writer(fp, delimeter=',')
-    # a.writerows(data)
-    # print(data)
-
     cv2.waitKey(1)
 
    
