@@ -101,31 +101,10 @@ while True:
     frame = {'Names': nameList, 'Time': timeList}
     df = pd.DataFrame(frame);
     df.to_csv("Attendance.csv")
-#     print("1")
-    print(df)
-#     print("2")
-    print(nameList)
-    print(timeList)
-    nameSz = len(nameList)
-    #for i in range(nameSz):
-
-
-    # series2=pd.Series(timeList)
-    # series1=pd.Series(nameList)
-    # df.Name=series1
-    # df.Time=series2
+#     print(df)
+#     print(nameList)
+#     print(timeList)
+#     nameSz = len(nameList)
     
-    
-    cv2.imshow('Webcam', img)
-    # data=[]
-    # data_in=[]
-    # nt = len(nameList)
-    # for i in range(nt):
-    #     data_in = [nameList[i],timeList[i]]
-    #     data.append(data_in)
-    # with open('Attendance.csv','w',newline='') as fp:
-    #     a = csv.writer(fp, delimeter=',')
-    # a.writerows(data)
-    # print(data)
-
+    cv2.imshow('Webcam', img)  
     cv2.waitKey(1)
